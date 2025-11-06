@@ -35,4 +35,41 @@ out/
 
 ### VS Code ###
 .vscode/
-src/main/resources/*.json
+
+### Firebase & Security Keys ###
+# Firebase Admin SDK 키 파일
+src/main/resources/*firebase*.json
+src/main/resources/*-adminsdk-*.json
+**/*firebase-adminsdk*.json
+**/*-adminsdk-*.json
+
+# 모든 키 파일 (보안)
+**/*key*.json
+**/*secret*.json
+**/*credential*.json
+**/*service-account*.json
+
+### Environment Variables ###
+.env
+.env.local
+.env.*.local
+env.example
+env.example.txt
+
+### Scripts (Optional) ###
+*.sh
+!gradlew
+*.ps1
+
+### Documentation (Optional) ###
+*.md
+!README.md
+
+### Test Files (Optional) ###
+test-payload.json
+test-*.json
+
+### Deployment Files (Optional) ###
+cloudbuild.yaml
+deploy-*.sh
+run-docker.*

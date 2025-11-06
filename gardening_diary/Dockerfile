@@ -16,13 +16,13 @@ COPY src ./src
 # 애플리케이션 빌드 (테스트 제외)
 RUN ./gradlew bootJar --no-daemon -x test
 
-# 런타임 스테이지
-FROM eclipse-temurin:17-jre-alpine
+# 런타임 스테이지 (Alpine 대신 Debian 기반 사용 - Firebase/Google Cloud 호환성)
+FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
 # 보안을 위한 비-root 사용자 생성
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 # 빌드 스테이지에서 JAR 파일 복사
@@ -31,8 +31,13 @@ COPY --from=build /app/build/libs/*.jar app.jar
 # 애플리케이션 포트 노출 (Spring Boot 기본 포트)
 EXPOSE 8080
 
-# JVM 옵션 설정 (메모리 최적화)
-ENV JAVA_OPTS="-Xms256m -Xmx512m"
+# Healthcheck를 위한 curl 설치
+USER root
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+USER spring:spring
+
+# JVM 옵션 설정 (메모리 최적화 및 컨테이너 지원)
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
 # 애플리케이션 실행
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

@@ -10,3 +10,8 @@ echo "Docker 실행 중..."
 
 docker-compose up --build
 
+
+
+
+
+
