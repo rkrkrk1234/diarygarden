@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * 인증 컨트롤러
@@ -21,10 +23,25 @@ public class AuthController {
     
     @Autowired
     private AuthService authService;
+
+    // Authorization 헤더 검사 및 토큰 검증(유효하지 않으면 401 발생, 유효하면 AuthResponse 반환)
+    private AuthResponse requireValidAuth(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authorization header missing");
+        }
+        String token = authorizationHeader.substring(7);
+        AuthResponse authResponse = authService.verifyToken(token);
+        if (authResponse == null || !authResponse.isSuccess()) {
+            String msg = (authResponse == null || authResponse.getMessage() == null) ? "Invalid or expired token" : authResponse.getMessage();
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, msg);
+        }
+        return authResponse;
+    }
     
     /**
      * 아이디/비밀번호 회원가입
      */
+    
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
