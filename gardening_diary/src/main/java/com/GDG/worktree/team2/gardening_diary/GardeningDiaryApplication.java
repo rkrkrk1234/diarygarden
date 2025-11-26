@@ -1,16 +1,18 @@
 package com.GDG.worktree.team2.gardening_diary;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.ClassPathResource;
+
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import org.springframework.beans.factory.annotation.Value;
-import jakarta.annotation.PostConstruct;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-import java.io.InputStream;
+import jakarta.annotation.PostConstruct;
 
 @SpringBootApplication
 public class GardeningDiaryApplication {
@@ -50,7 +52,7 @@ public class GardeningDiaryApplication {
                 System.out.println("Firebase credentials loaded from environment variable.");
             } else {
                 // 로컬 개발 환경에서는 파일에서 읽어옴
-                serviceAccount = new ClassPathResource("diarygarden-7bb2d-firebase-adminsdk-fbsvc-eb51c377a7.json").getInputStream();
+                serviceAccount = new ClassPathResource("diarygarden-7bb2d-firebase-adminsdk-fbsvc-8febd6bf01.json").getInputStream();
                 System.out.println("Firebase credentials loaded from classpath.");
             }
         }

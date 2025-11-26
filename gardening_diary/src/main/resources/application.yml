@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: gardening_diary # 애플리케이션 이름
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration # JDBC 자동설정 제외
+  jackson:
+    date-format: "yyyy-MM-dd HH:mm:ss" # JSON 직렬화 날짜 포맷
+    time-zone: "Asia/Seoul"             # 타임존 설정
+  web:
+    cors:
+      allowed-origins:
+        - "*" # 개발용: 모든 오리진 허용 (프로덕션에서는 도메인 명시 권장)
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowed-headers:
+        - "*" # 개발용: 모든 헤더 허용 (보안상 제한 권장)
+      allow-credentials: true # 쿠키/인증 자격 증명 허용 여부
+
+firebase:
+  service-account-file: "classpath:diarygarden-7bb2d-firebase-adminsdk-fbsvc-eb51c377a7.json" # 서비스계정 파일(클래스패스)
+
+gcp:
+  project-id: diarygarden-7bb2d # GCP 프로젝트 ID (환경변수로 오버라이드 가능)
+
+server:
+  port: 8080 # 서버 포트
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never # 스택트레이스는 개발 외에는 노출 금지 권장
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info # actuator 노출 항목
+  endpoint:
+    health:
+      show-details: when_authorized # health 세부정보 노출 정책
+
+logging:
+  level:
+    com.GDG.worktree.team2.gardening_diary: INFO # 애플리케이션 로그 레벨
+    org.springframework.security: DEBUG            # 인증/인가 문제 디버그용
+    com.google.cloud.firestore: DEBUG             # Firestore 관련 디버그 (필요 시)
+    org.springframework.web: DEBUG                 # 웹 요청 디버그
