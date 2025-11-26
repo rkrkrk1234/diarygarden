@@ -56,14 +56,7 @@ src/main/resources/*-adminsdk-*.json
 env.example
 env.example.txt
 
-### Scripts (Optional) ###
-*.sh
-!gradlew
-*.ps1
 
-### Documentation (Optional) ###
-*.md
-!README.md
 
 ### Test Files (Optional) ###
 test-payload.json

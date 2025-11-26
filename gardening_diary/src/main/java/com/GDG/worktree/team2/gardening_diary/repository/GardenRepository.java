@@ -57,7 +57,7 @@ public class GardenRepository {
      */
     public List<Garden> findByUserId(String userId) throws ExecutionException, InterruptedException {
         Query query = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("userId", userId);
+                .whereEqualTo("user_id", userId);
         
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         QuerySnapshot documents = querySnapshot.get();

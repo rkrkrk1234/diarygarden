@@ -1,149 +1,103 @@
 package com.GDG.worktree.team2.gardening_diary.entity;
 
 import com.google.cloud.firestore.annotation.DocumentId;
+import com.google.cloud.firestore.annotation.PropertyName;
 import com.google.cloud.firestore.annotation.ServerTimestamp;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 /**
- * 정원/나무 엔티티
+ * Garden 엔티티
+ *
+ * <p>필드 구성:
+ * <ul>
+ *   <li>id: 문서 ID</li>
+ *   <li>userId: 사용자 ID</li>
+ *   <li>treeCount: 사용자가 보유한 나무 수</li>
+ *   <li>createdAt / updatedAt: Firestore 서버 타임스탬프</li>
+ * </ul>
  */
 public class Garden {
+
     @DocumentId
     private String id;
-    
-    private String userId; // 사용자 ID
-    private String treeType; // 나무 종류 (예: "벚나무")
-    private String status; // 상태 (예: "성장 중")
-    private int diaryCount; // 다이어리 개수
-    private List<String> leafColors; // 잎 색상 목록
-    private String treeSnapshot; // 나무 스냅샷 이미지 URL
-    private LocalDateTime weekStartDate; // 주 시작 날짜
-    private LocalDateTime weekEndDate; // 주 종료 날짜
-    
+
+    @PropertyName("user_id")
+    private String userId;
+
+    @PropertyName("tree_count")
+    private int treeCount;
+
+    @PropertyName("created_at")
     @ServerTimestamp
     private Date createdAt;
 
+    @PropertyName("updated_at")
     @ServerTimestamp
     private Date updatedAt;
-    
-    // 기본 생성자
+
     public Garden() {}
-    
-    // 생성자
-    public Garden(String userId, String treeType) {
+
+    public Garden(String userId, int treeCount) {
         this.userId = userId;
-        this.treeType = treeType;
-        this.status = "성장 중";
-        this.diaryCount = 0;
+        this.treeCount = treeCount;
     }
-    
-    // Getters and Setters
+
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    @PropertyName("user_id")
     public String getUserId() {
         return userId;
     }
-    
+
+    @PropertyName("user_id")
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    
-    public String getTreeType() {
-        return treeType;
+
+    @PropertyName("tree_count")
+    public int getTreeCount() {
+        return treeCount;
     }
-    
-    public void setTreeType(String treeType) {
-        this.treeType = treeType;
+
+    @PropertyName("tree_count")
+    public void setTreeCount(int treeCount) {
+        this.treeCount = treeCount;
     }
-    
-    public String getStatus() {
-        return status;
-    }
-    
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
-    public int getDiaryCount() {
-        return diaryCount;
-    }
-    
-    public void setDiaryCount(int diaryCount) {
-        this.diaryCount = diaryCount;
-    }
-    
-    public List<String> getLeafColors() {
-        return leafColors;
-    }
-    
-    public void setLeafColors(List<String> leafColors) {
-        this.leafColors = leafColors;
-    }
-    
-    public String getTreeSnapshot() {
-        return treeSnapshot;
-    }
-    
-    public void setTreeSnapshot(String treeSnapshot) {
-        this.treeSnapshot = treeSnapshot;
-    }
-    
-    public LocalDateTime getWeekStartDate() {
-        return weekStartDate;
-    }
-    
-    public void setWeekStartDate(LocalDateTime weekStartDate) {
-        this.weekStartDate = weekStartDate;
-    }
-    
-    public LocalDateTime getWeekEndDate() {
-        return weekEndDate;
-    }
-    
-    public void setWeekEndDate(LocalDateTime weekEndDate) {
-        this.weekEndDate = weekEndDate;
-    }
-    
+
+    @PropertyName("created_at")
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    @PropertyName("created_at")
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
+    @PropertyName("updated_at")
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
+    @PropertyName("updated_at")
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
+
     @Override
     public String toString() {
         return "Garden{" +
                 "id='" + id + '\'' +
                 ", userId='" + userId + '\'' +
-                ", treeType='" + treeType + '\'' +
-                ", status='" + status + '\'' +
-                ", diaryCount=" + diaryCount +
-                ", leafColors=" + leafColors +
-                ", treeSnapshot='" + treeSnapshot + '\'' +
-                ", weekStartDate=" + weekStartDate +
-                ", weekEndDate=" + weekEndDate +
+                ", treeCount=" + treeCount +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
     }
 }
-
-
