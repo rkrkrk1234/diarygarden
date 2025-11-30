@@ -102,12 +102,13 @@ public class DiaryRepository {
     }
     
     /**
-     * 나무별 다이어리 조회
+     * 나무별 다이어리 조회 (사용자 제한)
      */
-    public List<Diary> findByTreeId(String treeId) throws ExecutionException, InterruptedException {
-    Query query = firestore.collection(COLLECTION_NAME)
-        .whereEqualTo("treeId", treeId)
-        .orderBy("createdAt", Query.Direction.ASCENDING);
+    public List<Diary> findByTreeId(String treeId, String userId) throws ExecutionException, InterruptedException {
+        Query query = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("treeId", treeId)
+                .whereEqualTo("userId", userId)
+                .orderBy("createdAt", Query.Direction.ASCENDING);
         
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         QuerySnapshot documents = querySnapshot.get();

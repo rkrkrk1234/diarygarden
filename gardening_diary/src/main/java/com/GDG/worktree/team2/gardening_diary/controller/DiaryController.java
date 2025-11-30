@@ -6,7 +6,9 @@ import com.GDG.worktree.team2.gardening_diary.entity.Diary;
 import com.GDG.worktree.team2.gardening_diary.service.DiaryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,22 +21,24 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class DiaryController {
     
+    private final DiaryService diaryService;
+
     @Autowired
-    private DiaryService diaryService;
+    public DiaryController(DiaryService diaryService) {
+        this.diaryService = diaryService;
+    }
     
     /**
      * 다이어리 생성
      */
     @PostMapping
     public ResponseEntity<ApiResponse<Diary>> createDiary(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String userId,
             @Valid @RequestBody DiaryRequest request) {
         
         try {
-            // 토큰 검증 및 사용자 ID 추출
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
             
             Diary diary = diaryService.createDiary(userId, request);
@@ -50,13 +54,11 @@ public class DiaryController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<Diary>> getDiary(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String userId,
             @PathVariable String id) {
         try {
-            // 인증 확인
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
 
             Diary diary = diaryService.getDiaryById(id);
@@ -81,15 +83,13 @@ public class DiaryController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<Diary>>> getUserDiaries(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String userId,
             @RequestParam(defaultValue = "0") int limit,
             @RequestParam(required = false) String lastDocId) {
         
         try {
-            // 토큰 검증 및 사용자 ID 추출
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
             
             List<Diary> diaries;
@@ -111,15 +111,13 @@ public class DiaryController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Diary>> updateDiary(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String userId,
             @PathVariable String id,
             @Valid @RequestBody DiaryRequest request) {
         
         try {
-            // 토큰 검증 및 사용자 ID 추출
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
             
             Diary diary = diaryService.updateDiary(id, userId, request);
@@ -141,14 +139,12 @@ public class DiaryController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteDiary(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String userId,
             @PathVariable String id) {
         
         try {
-            // 토큰 검증 및 사용자 ID 추출
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
             
             boolean success = diaryService.deleteDiary(id, userId);
@@ -173,12 +169,10 @@ public class DiaryController {
      * 다이어리 개수 조회
      */
     @GetMapping("/count")
-    public ResponseEntity<ApiResponse<Long>> getDiaryCount(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<Long>> getDiaryCount(@AuthenticationPrincipal String userId) {
         try {
-            // 토큰 검증 및 사용자 ID 추출
-            String userId = getUserIdFromToken(token);
             if (userId == null) {
-                return ResponseEntity.status(401).body(new ApiResponse<>("인증이 필요합니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
             }
             
             long count = diaryService.getDiaryCount(userId);
@@ -190,33 +184,17 @@ public class DiaryController {
     }
     
     /**
-     * 토큰에서 사용자 ID 추출하는 헬퍼 메서드
-     */
-    private String getUserIdFromToken(String token) {
-        try {
-            // Bearer 토큰에서 실제 토큰 추출
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            }
-            
-            com.google.firebase.auth.FirebaseToken decodedToken = 
-                    com.google.firebase.auth.FirebaseAuth.getInstance().verifyIdToken(token);
-            
-            return decodedToken.getUid();
-            
-        } catch (Exception e) {
-            System.err.println("토큰 검증 실패: " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
      * 나무별 다이어리 조회 엔드포인트
      */
     @GetMapping("/tree/{treeId}")
-    public ResponseEntity<ApiResponse<List<Diary>>> getDiariesByTreeId(@PathVariable String treeId) {
+    public ResponseEntity<ApiResponse<List<Diary>>> getDiariesByTreeId(
+            @AuthenticationPrincipal String userId,
+            @PathVariable String treeId) {
         try {
-            List<Diary> diaries = diaryService.getDiariesByTreeId(treeId);
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
+            }
+            List<Diary> diaries = diaryService.getDiariesByTreeId(treeId, userId);
             return ResponseEntity.ok(new ApiResponse<>(diaries, "나무별 다이어리 조회 성공"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ApiResponse<>("다이어리 조회 실패: " + e.getMessage()));

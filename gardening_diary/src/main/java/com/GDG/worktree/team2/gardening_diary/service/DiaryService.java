@@ -117,8 +117,9 @@ public class DiaryService {
     /**
      * 나무별 다이어리 조회
      */
-    public java.util.List<Diary> getDiariesByTreeId(String treeId) throws ExecutionException, InterruptedException {
-        return diaryRepository.findByTreeId(treeId);
+    public java.util.List<Diary> getDiariesByTreeId(String treeId, String userId)
+            throws ExecutionException, InterruptedException {
+        return diaryRepository.findByTreeId(treeId, userId);
     }
 }
 

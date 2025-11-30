@@ -3,6 +3,7 @@ package com.GDG.worktree.team2.gardening_diary.entity;
 import java.util.Date;
 
 import com.google.cloud.firestore.annotation.DocumentId;
+import com.google.cloud.firestore.annotation.PropertyName;
 import com.google.cloud.firestore.annotation.ServerTimestamp;
 
 /**

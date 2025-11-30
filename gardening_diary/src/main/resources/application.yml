@@ -22,7 +22,7 @@ spring:
       allow-credentials: true # 쿠키/인증 자격 증명 허용 여부
 
 firebase:
-  service-account-file: "classpath:diarygarden-7bb2d-firebase-adminsdk-fbsvc-eb51c377a7.json" # 서비스계정 파일(클래스패스)
+  service-account-file: "classpath:diarygarden-7bb2d-firebase-adminsdk-fbsvc-e77de73a02.json" # 서비스계정 파일(클래스패스)
 
 gcp:
   project-id: diarygarden-7bb2d # GCP 프로젝트 ID (환경변수로 오버라이드 가능)

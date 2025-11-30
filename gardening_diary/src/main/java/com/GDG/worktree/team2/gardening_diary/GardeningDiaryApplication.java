@@ -52,7 +52,7 @@ public class GardeningDiaryApplication {
                 System.out.println("Firebase credentials loaded from environment variable.");
             } else {
                 // 로컬 개발 환경에서는 파일에서 읽어옴
-                serviceAccount = new ClassPathResource("diarygarden-7bb2d-firebase-adminsdk-fbsvc-8febd6bf01.json").getInputStream();
+                serviceAccount = new ClassPathResource("diarygarden-7bb2d-firebase-adminsdk-fbsvc-e77de73a02.json").getInputStream();
                 System.out.println("Firebase credentials loaded from classpath.");
             }
         }

@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,10 +19,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
     private FirebaseAuth firebaseAuth;
+    
+    @Autowired
+    public AuthService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
     
     /**
      * FirebaseAuth 인스턴스 가져오기 (지연 초기화)
@@ -59,7 +67,7 @@ public class AuthService {
             User user = new User();
             user.setUid(userRecord.getUid());
             user.setUsername(request.getUsername());
-            user.setPassword(request.getPassword()); // 비밀번호 저장 (암호화되지 않은 상태)
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setDisplayName(userRecord.getDisplayName());
             user.setNickname(request.getDisplayName());
             user.setAuthProvider("USERNAME");
@@ -92,8 +100,13 @@ public class AuthService {
                 return new AuthResponse("존재하지 않는 아이디입니다");
             }
             
-            // 참고: 실제 비밀번호 검증은 Firebase Auth SDK에서 처리됩니다
-            // 클라이언트는 username + "@gardening-diary.app" 형식으로 Firebase Auth 로그인 수행
+            if (user.getPassword() == null) {
+                return new AuthResponse("해당 계정은 비밀번호 로그인을 지원하지 않습니다");
+            }
+            if (request.getPassword() == null ||
+                    !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                return new AuthResponse("비밀번호가 일치하지 않습니다");
+            }
             return new AuthResponse("", user.getUid(), request.getUsername(), user.getDisplayName());
             
         } catch (Exception e) {
@@ -106,7 +119,7 @@ public class AuthService {
      */
     public AuthResponse verifyToken(String idToken) {
         try {
-            FirebaseToken decodedToken = firebaseAuth.verifyIdToken(idToken);
+            FirebaseToken decodedToken = getFirebaseAuth().verifyIdToken(idToken);
             String uid = decodedToken.getUid();
             
             // Firestore에서 사용자 정보 조회
@@ -115,7 +128,8 @@ public class AuthService {
                 return new AuthResponse("사용자 정보를 찾을 수 없습니다");
             }
             
-            return new AuthResponse(idToken, uid, user.getEmail(), user.getDisplayName());
+            String identifier = user.getEmail() != null ? user.getEmail() : user.getUsername();
+            return new AuthResponse(idToken, uid, identifier, user.getDisplayName());
             
         } catch (FirebaseAuthException e) {
             return new AuthResponse("토큰 검증 실패: " + e.getMessage());
@@ -167,7 +181,7 @@ public class AuthService {
     public boolean deleteUser(String uid) {
         try {
             // Firebase Auth에서 사용자 삭제
-            firebaseAuth.deleteUser(uid);
+            getFirebaseAuth().deleteUser(uid);
             
             // Firestore에서 사용자 정보 삭제
             userRepository.deleteByUid(uid);

@@ -8,10 +8,10 @@ import com.GDG.worktree.team2.gardening_diary.entity.User;
 import com.GDG.worktree.team2.gardening_diary.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 인증 컨트롤러
@@ -21,23 +21,13 @@ import org.springframework.web.server.ResponseStatusException;
 @CrossOrigin(origins = "*")
 public class AuthController {
     
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-    // Authorization 헤더 검사 및 토큰 검증(유효하지 않으면 401 발생, 유효하면 AuthResponse 반환)
-    private AuthResponse requireValidAuth(String authorizationHeader) {
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authorization header missing");
-        }
-        String token = authorizationHeader.substring(7);
-        AuthResponse authResponse = authService.verifyToken(token);
-        if (authResponse == null || !authResponse.isSuccess()) {
-            String msg = (authResponse == null || authResponse.getMessage() == null) ? "Invalid or expired token" : authResponse.getMessage();
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, msg);
-        }
-        return authResponse;
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
-    
+
     /**
      * 아이디/비밀번호 회원가입
      */
@@ -90,19 +80,12 @@ public class AuthController {
      * 사용자 정보 조회
      */
     @GetMapping("/user")
-    public ResponseEntity<ApiResponse<User>> getUserInfo(@RequestHeader("Authorization") String token) {
-        // Bearer 토큰에서 실제 토큰 추출
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
+    public ResponseEntity<ApiResponse<User>> getUserInfo(@AuthenticationPrincipal String uid) {
+        if (uid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
         }
         
-        AuthResponse authResponse = authService.verifyToken(token);
-        
-        if (!authResponse.isSuccess()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(authResponse.getMessage()));
-        }
-        
-        User user = authService.getUserByUid(authResponse.getUid());
+        User user = authService.getUserByUid(uid);
         
         if (user != null) {
             return ResponseEntity.ok(new ApiResponse<>(user, "사용자 정보 조회 성공"));
@@ -116,22 +99,15 @@ public class AuthController {
      */
     @PutMapping("/user")
     public ResponseEntity<ApiResponse<User>> updateUser(
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal String uid,
             @RequestParam(required = false) String displayName,
             @RequestParam(required = false) String profileImageUrl) {
         
-        // Bearer 토큰에서 실제 토큰 추출
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
+        if (uid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
         }
         
-        AuthResponse authResponse = authService.verifyToken(token);
-        
-        if (!authResponse.isSuccess()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(authResponse.getMessage()));
-        }
-        
-        User user = authService.updateUser(authResponse.getUid(), displayName, profileImageUrl);
+        User user = authService.updateUser(uid, displayName, profileImageUrl);
         
         if (user != null) {
             return ResponseEntity.ok(new ApiResponse<>(user, "사용자 정보 수정 성공"));
@@ -144,19 +120,12 @@ public class AuthController {
      * 회원 탈퇴
      */
     @DeleteMapping("/user")
-    public ResponseEntity<ApiResponse<String>> deleteUser(@RequestHeader("Authorization") String token) {
-        // Bearer 토큰에서 실제 토큰 추출
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
+    public ResponseEntity<ApiResponse<String>> deleteUser(@AuthenticationPrincipal String uid) {
+        if (uid == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>("인증이 필요합니다"));
         }
         
-        AuthResponse authResponse = authService.verifyToken(token);
-        
-        if (!authResponse.isSuccess()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(authResponse.getMessage()));
-        }
-        
-        boolean success = authService.deleteUser(authResponse.getUid());
+        boolean success = authService.deleteUser(uid);
         
         if (success) {
             return ResponseEntity.ok(new ApiResponse<>("회원 탈퇴가 완료되었습니다", "회원 탈퇴 성공"));
