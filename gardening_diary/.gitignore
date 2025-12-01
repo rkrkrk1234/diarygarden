@@ -51,6 +51,7 @@ src/main/resources/*-adminsdk-*.json
 
 # 모든 resources의 JSON 파일
 src/main/resources/*.json
+src/main/resources/*.properties
 
 ### Environment Variables ###
 .env
