@@ -2,23 +2,35 @@ package com.GDG.worktree.team2.gardening_diary.entity;
 
 import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.ServerTimestamp;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 
 /**
  * 다이어리 엔티티
  */
+@Schema(description = "다이어리 정보")
 public class Diary {
+    @Schema(description = "다이어리 ID", example = "diary123")
     @DocumentId
     private String id;
     
+    @Schema(description = "사용자 ID", example = "user123")
     private String userId; // 사용자 ID
+    
+    @Schema(description = "나무 ID", example = "tree123")
     private String treeId; // 나무 ID (gardens 컬렉션 참조)
+    
+    @Schema(description = "다이어리 내용", example = "오늘은 정원에 물을 주었습니다.")
     private String content; // 내용
+    
+    @Schema(description = "작성 날짜", example = "2024-01-01T00:00:00")
     private Date writtenDate; // 작성 날짜 (Firestore 호환 Date 타입)
     
+    @Schema(description = "생성 일시", example = "2024-01-01T00:00:00")
     @ServerTimestamp
     private Date createdAt;
 
+    @Schema(description = "수정 일시", example = "2024-01-01T00:00:00")
     @ServerTimestamp
     private Date updatedAt;
     

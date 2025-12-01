@@ -1,14 +1,18 @@
 package com.GDG.worktree.team2.gardening_diary.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 /**
  * 다이어리 요청 DTO
  */
+@Schema(description = "다이어리 생성 요청")
 public class DiaryRequest {
+    @Schema(description = "나무 ID", example = "tree123", required = true)
     @NotBlank(message = "나무 ID는 필수입니다")
     private String treeId;
     
+    @Schema(description = "다이어리 내용", example = "오늘은 정원에 물을 주었습니다.", required = true)
     @NotBlank(message = "내용은 필수입니다")
     private String content;
     

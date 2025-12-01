@@ -22,7 +22,7 @@ spring:
       allow-credentials: true # 쿠키/인증 자격 증명 허용 여부
 
 firebase:
-  service-account-file: classpath:diarygarden-7bb2d-firebase-adminsdk-fbsvc-a7cb0137c7.json
+  service-account-file: "classpath:diarygarden-7bb2d-firebase-adminsdk-fbsvc-eb51c377a7.json" # 서비스계정 파일(클래스패스)
 
 gcp:
   project-id: diarygarden-7bb2d # GCP 프로젝트 ID (환경변수로 오버라이드 가능)
@@ -51,3 +51,11 @@ logging:
     org.springframework.security: DEBUG            # 인증/인가 문제 디버그용
     com.google.cloud.firestore: DEBUG             # Firestore 관련 디버그 (필요 시)
     org.springframework.web: DEBUG                 # 웹 요청 디버그
+
+# SpringDoc OpenAPI (Swagger UI) 설정
+springdoc:
+  swagger-ui:
+    persist-authorization: false  # 브라우저에 토큰 저장하지 않음
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

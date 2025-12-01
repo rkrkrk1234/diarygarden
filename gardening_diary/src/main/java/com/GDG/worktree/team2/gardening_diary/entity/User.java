@@ -2,27 +2,47 @@ package com.GDG.worktree.team2.gardening_diary.entity;
 
 import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.ServerTimestamp;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 
 /**
  * 사용자 엔티티
  */
+@Schema(description = "사용자 정보")
 public class User {
+    @Schema(description = "사용자 ID", example = "user123")
     @DocumentId
     private String id;
     
+    @Schema(description = "Firebase Auth UID", example = "firebase_uid_123")
     private String uid; // Firebase Auth UID
+    
+    @Schema(description = "아이디 (일반 회원가입용)", example = "testuser")
     private String username; // 아이디 (일반 회원가입용)
+    
+    @Schema(description = "비밀번호", example = "******", hidden = true)
     private String password; // 비밀번호 (암호화되지 않은 상태)
+    
+    @Schema(description = "이메일 (구글 로그인용)", example = "user@example.com")
     private String email; // 이메일 (구글 로그인용)
+    
+    @Schema(description = "닉네임", example = "닉네임")
     private String nickname;
+    
+    @Schema(description = "표시 이름", example = "홍길동")
     private String displayName;
+    
+    @Schema(description = "프로필 이미지 URL", example = "https://example.com/profile.jpg")
     private String profileImageUrl;
+    
+    @Schema(description = "인증 제공자", example = "USERNAME", allowableValues = {"USERNAME", "GOOGLE"})
     private String authProvider; // "USERNAME" 또는 "GOOGLE"
     
+    @Schema(description = "생성 일시", example = "2024-01-01T00:00:00")
     @ServerTimestamp
     private Date createdAt;
 
+    @Schema(description = "수정 일시", example = "2024-01-01T00:00:00")
     @ServerTimestamp
     private Date updatedAt;
     

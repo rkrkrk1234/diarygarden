@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 헬스체크 컨트롤러
  */
+@Tag(name = "헬스체크", description = "서비스 상태 확인 API")
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -20,6 +25,13 @@ public class HealthController {
     /**
      * 헬스체크 엔드포인트
      */
+    @Operation(
+        summary = "헬스체크",
+        description = "서비스의 상태를 확인합니다."
+    )
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "서비스 정상 작동 중")
+    })
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> response = new HashMap<>();
@@ -33,6 +45,13 @@ public class HealthController {
     /**
      * API 정보
      */
+    @Operation(
+        summary = "API 정보",
+        description = "API의 기본 정보를 조회합니다."
+    )
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "API 정보 조회 성공")
+    })
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> info() {
         Map<String, Object> response = new HashMap<>();

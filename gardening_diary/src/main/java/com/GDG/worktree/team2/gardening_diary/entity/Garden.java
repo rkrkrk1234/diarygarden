@@ -5,6 +5,7 @@ import java.util.Date;
 import com.google.cloud.firestore.annotation.DocumentId;
 import com.google.cloud.firestore.annotation.PropertyName;
 import com.google.cloud.firestore.annotation.ServerTimestamp;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Garden 엔티티
@@ -17,21 +18,27 @@ import com.google.cloud.firestore.annotation.ServerTimestamp;
  *   <li>createdAt / updatedAt: Firestore 서버 타임스탬프</li>
  * </ul>
  */
+@Schema(description = "정원 정보")
 public class Garden {
 
+    @Schema(description = "정원 ID", example = "garden123")
     @DocumentId
     private String id;
 
+    @Schema(description = "사용자 ID", example = "user123")
     @PropertyName("user_id")
     private String userId;
 
+    @Schema(description = "나무의 개수", example = "5")
     @PropertyName("tree_count")
     private int treeCount;
 
+    @Schema(description = "생성 일시", example = "2024-01-01T00:00:00")
     @PropertyName("created_at")
     @ServerTimestamp
     private Date createdAt;
 
+    @Schema(description = "수정 일시", example = "2024-01-01T00:00:00")
     @PropertyName("updated_at")
     @ServerTimestamp
     private Date updatedAt;
