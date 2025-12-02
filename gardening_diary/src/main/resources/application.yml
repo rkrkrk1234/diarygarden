@@ -30,6 +30,8 @@ gcp:
 
 server:
   port: 8080 # 서버 포트
+  # Cloud Run 프록시 헤더 신뢰 설정 (HTTPS 인식용)
+  forward-headers-strategy: framework # 프록시 헤더(X-Forwarded-*)를 신뢰하여 HTTPS 인식
   error:
     include-message: always
     include-binding-errors: always
@@ -60,3 +62,5 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
+  # Cloud Run 환경에서 HTTPS URL 생성하도록 설정
+  use-management-port: false
