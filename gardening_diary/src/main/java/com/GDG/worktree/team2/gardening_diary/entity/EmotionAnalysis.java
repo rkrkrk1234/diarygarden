@@ -19,8 +19,14 @@ public class EmotionAnalysis {
     @Schema(description = "다이어리 ID", example = "diary123")
     private String diaryId; // 다이어리 ID
     
-    @Schema(description = "감정 분석 결과 (감정명: 점수)", example = "{\"기쁨\": 0.8, \"슬픔\": 0.2}")
-    private Map<String, Double> result; // 감정 분석 결과 (예: {"기쁨": 0.8, "슬픔": 0.2})
+    @Schema(description = "AI가 작성한 코멘트", example = "오늘은 안정된 하루였네요.")
+    private String comment;
+
+    @Schema(description = "지배적인 감정", example = "happy")
+    private String dominantEmotion;
+
+    @Schema(description = "감정 분석 결과 (감정명: 점수)", example = "{\"happy\": 0.8, \"sad\": 0.2}")
+    private Map<String, Double> result; // 감정별 점수 맵
     
     @Schema(description = "생성 일시", example = "2024-01-01T00:00:00")
     @ServerTimestamp
@@ -63,6 +69,22 @@ public class EmotionAnalysis {
     public void setResult(Map<String, Double> result) {
         this.result = result;
     }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getDominantEmotion() {
+        return dominantEmotion;
+    }
+
+    public void setDominantEmotion(String dominantEmotion) {
+        this.dominantEmotion = dominantEmotion;
+    }
     
     public Date getCreatedAt() {
         return createdAt;
@@ -85,6 +107,8 @@ public class EmotionAnalysis {
         return "EmotionAnalysis{" +
                 "id='" + id + '\'' +
                 ", diaryId='" + diaryId + '\'' +
+            ", comment='" + comment + '\'' +
+            ", dominantEmotion='" + dominantEmotion + '\'' +
                 ", result=" + result +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
