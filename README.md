@@ -187,28 +187,8 @@ public class DiaryRepository {
 - Service Layer와 데이터베이스 구현 분리
 - 향후 다른 NoSQL로 전환 시 유연성 확보
 
-### 3. 비동기 감정 분석 처리
 
-**문제**: 외부 AI API 호출이 느릴 수 있고, 실패 시에도 일기 저장은 성공해야 함
-
-**해결**: 
-- 일기 저장 후 비동기로 감정 분석 수행
-- API 실패 시 기본값 반환 (Fallback)
-
-```java
-public Diary createDiary(String userId, DiaryRequest request) {
-    Diary saved = diaryRepository.save(diary);
-    // 비동기로 감정 분석 수행 (실패해도 일기는 저장됨)
-    emotionAnalysisService.analyzeAndSave(saved.getId(), saved.getContent());
-    return saved;
-}
-```
-
-**장점**:
-- 사용자 경험 향상 (일기 저장이 빠르게 완료)
-- 외부 서비스 장애에 대한 격리
-
-### 4. 환경 변수 관리
+### 3. 환경 변수 관리
 
 **문제**: Firebase 자격 증명 등 민감한 정보를 코드에 포함하면 안 됨
 
@@ -225,7 +205,7 @@ Dotenv dotenv = Dotenv.configure()
         .load();
 ```
 
-### 5. CORS 및 보안 설정
+### 4. CORS 및 보안 설정
 
 **구현**:
 - 개발 환경: 모든 오리진 허용 (유연한 개발)
@@ -463,5 +443,6 @@ gcloud run deploy gardening-diary \
 | **API Docs** | SpringDoc OpenAPI (Swagger UI) |
 | **Deployment** | Google Cloud Run, Docker |
 | **External API** | AI 감정 분석 API |
+
 
 
